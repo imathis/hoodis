@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Personality test</title>
+    <link href="stylesheets/test.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="favicon.png" rel="shortcut icon">
+  </head>
+  <body>
+    <div id="test"></div>
+  </body>
+  <script type="text/template" id="question">
+    <li>
+      <h2><%= title %></h1>
+      <ul>
+        <li> 
+          <input id="q<%= index %>a1" type="radio" name="q<%= index %>" data-attribute="<%= answers[0].attribute %>"><label for="q<%= index %>a1"><%= answers[0].text %></label>
+        </li>
+        <li>
+          <input id="q<%= index %>a2" type="radio" name="q<%= index %>" data-attribute="<%= answers[1].attribute %>"><label for="q<%= index %>a2"><%= answers[1].text %></label>
+        </li>
+      </ul>
+    </li>
+  </script>
+  <script type="text/template" id="results">
+    <header>
+      <h2>You are an</h2>
+      <h1>
+        <%=t[0]%><span><%=v[0]%></span>
+        <%=t[1]%><span><%=v[1]%></span>
+        <%=t[2]%><span><%=v[2]%></span>
+        <%=t[3]%><span><%=v[3]%></span>
+      </h1>
+    </header>
+  </script>
+  <script src="ender.js" type="text/javascript"></script>
+  <script src="javascripts/test.js" type="text/javascript"></script>
+</html>

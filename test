@@ -1,0 +1,10 @@
+{ string: "
+What do you blah?
+some paragraph
+-I some choice
+-E some other choice
+
+What do you also blah?
+-T an option
+-F another option
+" }

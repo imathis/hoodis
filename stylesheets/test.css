@@ -1,0 +1,16 @@
+/* line 1, ../sass/test.scss */
+ol {
+  min-width: 320px;
+  margin: 0 auto;
+}
+
+/* line 5, ../sass/test.scss */
+h2 {
+  font-size: 1.1em;
+}
+
+/* line 8, ../sass/test.scss */
+ul {
+  list-style: none;
+  padding: 0;
+}

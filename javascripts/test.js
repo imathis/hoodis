@@ -25,10 +25,8 @@
       var _this = this;
       return this.fetch({
         success: function(model, response, options) {
-          var qs;
-          qs = _this.parseQuestions(response.response);
           return _this.set({
-            questions: qs
+            questions: _this.parseQuestions(response.response)
           });
         }
       });
@@ -77,11 +75,11 @@
       return this.model.on('change:questions', this.render, this);
     },
     events: {
-      'change input': 'choose'
+      'click button': 'choose'
     },
     render: function() {
       var _this = this;
-      this.$el.append($('<ol id="questions">'));
+      this.$('header').after($('<ol id="questions">'));
       return $._.each($._.shuffle(this.model.get('questions')), function(q, index) {
         var t;
         t = $(_this.questionTemplate({
@@ -114,6 +112,15 @@
           return _this.model.set(attr, $._.union(_this.model.get(attr), [name]));
         });
         return this.renderResults();
+      } else {
+        if (checked.length === 73) {
+          alert("You missed one");
+        } else if (checked.length === 72) {
+          alert("You missed a couple");
+        } else {
+          alert("You missed a few");
+        }
+        return checked.parents('.question').addClass('answered');
       }
     },
     calc: function() {

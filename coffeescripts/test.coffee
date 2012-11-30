@@ -16,8 +16,7 @@ window.Questions = $.Model.extend
 
   initialize: ->
     @fetch success: (model, response, options) =>
-      qs = @parseQuestions(response.response)
-      @set questions: qs
+      @set questions: @parseQuestions(response.response)
 
   parseQuestions: (data) =>
     questions = data.trim().replace(/#[^\n]*\n\n/gm, '').split /\n{2,}/
@@ -46,10 +45,10 @@ window.Test = $.View.extend
     @model.on 'change:questions', @render, this
 
   events:
-    'change input' : 'choose'
+    'click button' : 'choose'
 
   render: ->
-    @$el.append $('<ol id="questions">')
+    @$('header').after $('<ol id="questions">')
     $._.each $._.shuffle(@model.get('questions')), (q, index) =>
       t = $(@questionTemplate(title: q.title, index: index + 1, answers: $._.shuffle(q.answers)))
       @$('ol').append t
@@ -68,6 +67,14 @@ window.Test = $.View.extend
         attr = input.attr('data-attribute')
         @model.set attr, $._.union(@model.get(attr), [name])
       @renderResults()
+    else
+      if checked.length is 73
+        alert "You missed one"
+      else if checked.length is 72
+        alert "You missed a couple"
+      else
+        alert "You missed a few"
+      checked.parents('.question').addClass('answered')
 
   calc: ->
     type = {}

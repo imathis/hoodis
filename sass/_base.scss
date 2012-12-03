@@ -1,6 +1,8 @@
-@import "compass";
-
 $input-border-focus: #3F9FCF;
+
+@mixin at-width($size) {
+  @media screen and (min-width: $size) { @content; }
+}
 
 html {
   background-color: mix(#fff, $input-border-focus, 92%);//#fafafa;
@@ -8,43 +10,26 @@ html {
 body {
   font-family: Helvetica, Arial, sans;
 }
-#test {
-  max-width: 500px;
-  margin: 1em auto;
-  padding: 1em;
-  @include box-shadow(rgba(#000, .1) 0 0 4px 1px inset, rgba(#000, .1) 0 1px 8px);
-  border: 1em solid rgba(#fff, .8);
-}
 
 ol {
-  margin: 0;
-  > li { margin-bottom: 1.45em; }
+  margin: 0 0 0;
+  padding: 0;
+  list-style: none;
 }
 h1 {
   font-size: 1.7em;
 }
 h2 {
-  font-size: 1.1em;
+  font-size: 1.8em;
 }
 ul {
   list-style: none;
   padding: 0;
-}
-li {
-  margin-bottom: .3em;
-}
-.answered {
-  opacity: .5;
-  @include transition(opacity .3s);
-  ul { display: none; }
+  margin: 0;
+  @include pie-clearfix;
 }
 
-header {
-  text-align: center; 
-  border-bottom: 1px dashed rgba(#000, .1);
-  margin: -1em -1em 2em;
-  padding: 1px 1px .5em;
-}
+footer { display: none; }
 
 input[type=checkbox], input[type=radio] { 
   position: absolute;
@@ -60,7 +45,7 @@ input[type=checkbox], input[type=radio] {
       position: relative;
       display: inline-block;
       text-align: center;
-      top: 3px;
+      top: 2px;
       margin-right: 8px;
       color: transparent;
       cursor: pointer;
@@ -87,7 +72,7 @@ input[type=radio] {
   + label:after {
     $size: 6px;
     width: $size; height: $size;
-    left: 5px; top: 6px;
+    left: 5px; top: .45em;
     @include border-radius($size);
   }
   + label:hover:after {
@@ -99,4 +84,18 @@ input[type=radio] {
   &:checked + label:after {
     @include background-image(linear-gradient(darken($input-border-focus, 10), lighten($input-border-focus, 5)));
   }
+}
+
+[data-icon]:before {
+  font-family: dblayer;
+  content: attr(data-icon);
+  -webkit-font-smoothing: antialiased;
+  speak: none;
+  line-height: 1em;
+}
+.screen-reader-text {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+  color: transparent;
 }

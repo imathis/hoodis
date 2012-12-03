@@ -21,12 +21,18 @@
       P: [],
       questions: []
     },
-    initialize: function() {
+    shuffle: true,
+    initialize: function(options) {
       var _this = this;
       return this.fetch({
         success: function(model, response, options) {
+          var qs;
+          qs = _this.parseQuestions(response.response);
+          if (_this.shuffle !== false) {
+            qs = $._.shuffle(qs);
+          }
           return _this.set({
-            questions: _this.parseQuestions(response.response)
+            questions: qs
           });
         }
       });
@@ -75,20 +81,29 @@
       return this.model.on('change:questions', this.render, this);
     },
     events: {
-      'click button': 'choose'
+      'click button': 'finish',
+      'click .answered h2': 'toggleQuestion',
+      'change .answered': 'closeQuestion',
+      'change .current': 'choose'
     },
     render: function() {
-      var _this = this;
-      this.$('header').after($('<ol id="questions">'));
-      return $._.each($._.shuffle(this.model.get('questions')), function(q, index) {
-        var t;
+      var list,
+        _this = this;
+      list = $('<ol id="questions">');
+      this.$('header').after(list);
+      $._.each(this.model.get('questions'), function(q, index) {
+        var answers, t;
+        answers = _this.model.shuffle ? $._.shuffle(q.answers) : q.answers;
         t = $(_this.questionTemplate({
           title: q.title,
+          paragraph: q.paragraph,
           index: index + 1,
-          answers: $._.shuffle(q.answers)
+          answers: answers
         }));
-        return _this.$('ol').append(t);
+        return list.append(t);
       });
+      this.list = list.find('li');
+      return this.list.first().addClass('current');
     },
     renderResults: function() {
       var type;
@@ -100,6 +115,32 @@
       })));
     },
     choose: function(e) {
+      var _this = this;
+      return $._.doAfter(400, function() {
+        var current;
+        _this.$('.previous').removeClass('previous');
+        current = $(e.currentTarget);
+        current.addClass('previous');
+        return $._.doAfter(200, function() {
+          var next;
+          current.addClass('answered');
+          current.removeClass('current');
+          next = current.next().addClass('current');
+          return _this.$('.question-index').text(next.attr('data-index'));
+        });
+      });
+    },
+    toggleQuestion: function(e) {
+      var q;
+      q = $(e.currentTarget).parents('.question');
+      return q.toggleClass('show');
+    },
+    closeQuestion: function(e) {
+      var q;
+      q = $(e.currentTarget);
+      return q.toggleClass('show');
+    },
+    finish: function(e) {
       var checked,
         _this = this;
       checked = this.$('input:checked');

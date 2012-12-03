@@ -14,9 +14,13 @@ window.Questions = $.Model.extend
     P: []
     questions: []
 
-  initialize: ->
+  shuffle: true
+
+  initialize: (options)->
     @fetch success: (model, response, options) =>
-      @set questions: @parseQuestions(response.response)
+      qs = @parseQuestions(response.response)
+      qs = $._.shuffle(qs) if @shuffle isnt false
+      @set questions: qs
 
   parseQuestions: (data) =>
     questions = data.trim().replace(/#[^\n]*\n\n/gm, '').split /\n{2,}/
@@ -45,13 +49,21 @@ window.Test = $.View.extend
     @model.on 'change:questions', @render, this
 
   events:
-    'click button' : 'choose'
+    'click button' : 'finish'
+    'click .answered h2' : 'toggleQuestion'
+    'change .answered' : 'closeQuestion'
+    'change .current' : 'choose'
 
   render: ->
-    @$('header').after $('<ol id="questions">')
-    $._.each $._.shuffle(@model.get('questions')), (q, index) =>
-      t = $(@questionTemplate(title: q.title, index: index + 1, answers: $._.shuffle(q.answers)))
-      @$('ol').append t
+    list = $('<ol id="questions">')
+    @$('header').after list
+
+    $._.each @model.get('questions'), (q, index) =>
+      answers = if @model.shuffle then $._.shuffle(q.answers) else q.answers
+      t = $(@questionTemplate(title: q.title, paragraph: q.paragraph, index: index + 1, answers: answers))
+      list.append t
+    @list = list.find('li')
+    @list.first().addClass('current')
 
   renderResults: ->
     type = @calc()
@@ -59,6 +71,25 @@ window.Test = $.View.extend
     @$el.append $(@resultsTemplate(t:$._.keys(type), v:$._.values(type)))
 
   choose: (e) ->
+    $._.doAfter 400, =>
+      @$('.previous').removeClass('previous')
+      current = $(e.currentTarget)
+      current.addClass('previous')
+      $._.doAfter 200, =>
+        current.addClass('answered')
+        current.removeClass('current')
+        next = current.next().addClass('current')
+        @$('.question-index').text next.attr('data-index')
+
+  toggleQuestion: (e) ->
+    q = $(e.currentTarget).parents('.question')
+    q.toggleClass('show')
+
+  closeQuestion: (e) ->
+    q = $(e.currentTarget)
+    q.toggleClass('show')
+
+  finish: (e) ->
     checked = @$('input:checked')
     if checked.length is 74
       @$('input:checked').each (i)=>

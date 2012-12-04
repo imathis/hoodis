@@ -1,7 +1,7 @@
 /*!
   * =============================================================
   * Ender: open module JavaScript framework (https://ender.no.de)
-  * Build: ender build bonzo domready qwery reqwest underscore backbone bean
+  * Build: ender build .
   * =============================================================
   */
 
@@ -143,9 +143,9 @@
       , doc = win.document
       , html = doc.documentElement
       , parentNode = 'parentNode'
-      , query = null // used for setting a selector engine host
       , specialAttributes = /^(checked|value|selected|disabled)$/i
       , specialTags = /^(select|fieldset|table|tbody|tfoot|td|tr|colgroup)$/i // tags that we have trouble inserting *into*
+      , simpleScriptTagRe = /\s*<script +src=['"]([^'"]+)['"]>/
       , table = ['<table>', '</table>', 1]
       , td = ['<table><tbody><tr>', '</tr></tbody></table>', 3]
       , option = ['<select>', '</select>', 1]
@@ -195,6 +195,7 @@
       , whitespaceRegex = /\s+/
       , toString = String.prototype.toString
       , unitless = { lineHeight: 1, zoom: 1, zIndex: 1, opacity: 1, boxFlex: 1, WebkitBoxFlex: 1, MozBoxFlex: 1 }
+      , query = doc.querySelectorAll && function (selector) { return doc.querySelectorAll(selector) }
       , trim = String.prototype.trim ?
           function (s) {
             return s.trim()
@@ -1167,6 +1168,13 @@
       return { x: win.pageXOffset || html.scrollLeft, y: win.pageYOffset || html.scrollTop }
     }
   
+    function createScriptFromHtml(html) {
+      var scriptEl = document.createElement('script')
+        , matches = html.match(simpleScriptTagRe)
+      scriptEl.src = matches[1]
+      return scriptEl
+    }
+  
     /**
      * @param {Array.<Element>|Element|Node|string} els
      * @return {Bonzo}
@@ -1191,7 +1199,8 @@
       // hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
       return typeof node == 'string' && node !== '' ?
         function () {
-          var tag = /^\s*<([^\s>]+)/.exec(node)
+          if (simpleScriptTagRe.test(node)) return [createScriptFromHtml(node)]
+          var tag = node.match(/^\s*<([^\s>]+)/)
             , el = doc.createElement('div')
             , els = []
             , p = tag ? tagMap[tag[1].toLowerCase()] : null
@@ -2085,6 +2094,7 @@
     function Reqwest(o, fn) {
       this.o = o
       this.fn = fn
+  
       init.apply(this, arguments)
     }
   
@@ -2094,10 +2104,25 @@
     }
   
     function init(o, fn) {
+  
       this.url = typeof o == 'string' ? o : o.url
       this.timeout = null
-      var type = o.type || setType(this.url)
-        , self = this
+  
+      // whether request has been fulfilled for purpose
+      // of tracking the Promises
+      this._fulfilled = false
+      // success handlers
+      this._fulfillmentHandlers = []
+      // error handlers
+      this._errorHandlers = []
+      // complete (both success and fail) handlers
+      this._completeHandlers = []
+      this._erred = false
+      this._responseArgs = {}
+  
+      var self = this
+        , type = o.type || setType(this.url)
+  
       fn = fn || function () {}
   
       if (o.timeout) {
@@ -2106,10 +2131,30 @@
         }, o.timeout)
       }
   
+      if (o.success) {
+        this._fulfillmentHandlers.push(function () {
+          o.success.apply(o, arguments)
+        })
+      }
+  
+      if (o.error) {
+        this._errorHandlers.push(function () {
+          o.error.apply(o, arguments)
+        })
+      }
+  
+      if (o.complete) {
+        this._completeHandlers.push(function () {
+          o.complete.apply(o, arguments)
+        })
+      }
+  
       function complete(resp) {
         o.timeout && clearTimeout(self.timeout)
         self.timeout = null
-        o.complete && o.complete(resp)
+        while (self._completeHandlers.length > 0) {
+          self._completeHandlers.shift()(resp)
+        }
       }
   
       function success(resp) {
@@ -2135,14 +2180,24 @@
           }
         }
   
+        self._responseArgs.resp = resp
+        self._fulfilled = true
         fn(resp)
-        o.success && o.success(resp)
+        while (self._fulfillmentHandlers.length > 0) {
+          self._fulfillmentHandlers.shift()(resp)
+        }
   
         complete(resp)
       }
   
       function error(resp, msg, t) {
-        o.error && o.error(resp, msg, t)
+        self._responseArgs.resp = resp
+        self._responseArgs.msg = msg
+        self._responseArgs.t = t
+        self._erred = true
+        while (self._errorHandlers.length > 0) {
+          self._errorHandlers.shift()(resp, msg, t)
+        }
         complete(resp)
       }
   
@@ -2156,6 +2211,50 @@
   
     , retry: function () {
         init.call(this, this.o, this.fn)
+      }
+  
+      /**
+       * Small deviation from the Promises A CommonJs specification
+       * http://wiki.commonjs.org/wiki/Promises/A
+       */
+  
+      /**
+       * `then` will execute upon successful requests
+       */
+    , then: function (success, fail) {
+        if (this._fulfilled) {
+          success(this._responseArgs.resp)
+        } else if (this._erred) {
+          fail(this._responseArgs.resp, this._responseArgs.msg, this._responseArgs.t)
+        } else {
+          this._fulfillmentHandlers.push(success)
+          this._errorHandlers.push(fail)
+        }
+        return this
+      }
+  
+      /**
+       * `always` will execute whether the request succeeds or fails
+       */
+    , always: function (fn) {
+        if (this._fulfilled || this._erred) {
+          fn(this._responseArgs.resp)
+        } else {
+          this._completeHandlers.push(fn)
+        }
+        return this
+      }
+  
+      /**
+       * `fail` will execute when the request fails
+       */
+    , fail: function (fn) {
+        if (this._erred) {
+          fn(this._responseArgs.resp, this._responseArgs.msg, this._responseArgs.t)
+        } else {
+          this._errorHandlers.push(fn)
+        }
+        return this
       }
     }
   
@@ -2904,7 +3003,7 @@
           }
   
           type = isTypeStr && typeSpec.replace(nameRegex, '')
-          if (type && customEvents[type]) type = customEvents[type].type
+          if (type && customEvents[type]) type = customEvents[type].base
   
           if (!typeSpec || isTypeStr) {
             // off(el) or off(el, t1.ns) or off(el, .ns) or off(el, .ns1.ns2.ns3)

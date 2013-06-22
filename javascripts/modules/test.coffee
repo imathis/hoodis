@@ -1,8 +1,9 @@
-$(document).ready ->
-  window.test = new window.Test(el: '#test', model: new window.Questions())
-    
-window.Questions = $.Model.extend
-  url: '/test'
+test =
+  start: ->
+    new Test(el: '#test', model: new Questions())
+
+class Questions extends Backbone.Model
+  url: '/test.markdown'
   defaults:
     E: []
     I: []
@@ -14,38 +15,39 @@ window.Questions = $.Model.extend
     P: []
     questions: []
 
-  shuffle: true
+  shuffle: false
 
   initialize: (options)->
-    @fetch success: (model, response, options) =>
-      qs = @parseQuestions(response.response)
-      qs = $._.shuffle(qs) if @shuffle isnt false
-      @set questions: qs
+    @fetch 
+      error: (model, response, options) =>
+        qs = @parseQuestions(response.responseText)
+        qs = _.shuffle(qs) unless @shuffle is false
+        @set questions: qs
 
   parseQuestions: (data) =>
-    questions = data.trim().replace(/#[^\n]*\n\n/gm, '').split /\n{2,}/
+    questions = data.trim().replace(/^#{1,2} [^\n]*\n{1,2}/gm, '').split /\n{2,}/
     qs = (for question in questions
-      parts = question.split /\n-/
+      parts = question.split /\n- /
       title = parts.shift().trim().split /\n/
       q = {}
-      q.title = title.shift()
+      q.title = title.shift().replace /#{3} /, ''
       q.paragraph = title.join(' ') if title[0]?
       q.answers = (for p in parts
-        attribute: p.match(/([EISNTFJP])\s*/)[1]
-        text: p.match(/^\w\s*(.*)/)[1]
+        attribute: p.match(/\(([EISNTFJP])\)\s*/)[1]
+        text: p.match(/^\(\w\)\s*(.*)/)[1]
       )
       q
     )
     qs
 
-window.Test = $.View.extend
+class Test extends Backbone.View
 
   responses: {}
 
   initialize: (options) ->
     @setElement $(options.el)
-    @questionTemplate = $._.template($('#question').html())
-    @resultsTemplate  = $._.template($('#results').html())
+    @questionTemplate = _.template($('#question').html())
+    @resultsTemplate  = _.template($('#results').html())
     @model.on 'change:questions', @render, this
 
   events:
@@ -58,8 +60,8 @@ window.Test = $.View.extend
     list = $('<ol id="questions">')
     @$('header').after list
 
-    $._.each @model.get('questions'), (q, index) =>
-      answers = if @model.shuffle then $._.shuffle(q.answers) else q.answers
+    _.each @model.get('questions'), (q, index) =>
+      answers = if @model.shuffle then _.shuffle(q.answers) else q.answers
       t = $(@questionTemplate(title: q.title, paragraph: q.paragraph, index: index + 1, answers: answers))
       list.append t
     @list = list.find('li')
@@ -68,18 +70,25 @@ window.Test = $.View.extend
   renderResults: ->
     type = @calc()
     @$el.empty()
-    @$el.append $(@resultsTemplate(t:$._.keys(type), v:$._.values(type)))
+    @$el.append $(@resultsTemplate(t:_.keys(type), v:_.values(type)))
 
   choose: (e) ->
-    $._.doAfter 400, =>
-      @$('.previous').removeClass('previous')
-      current = $(e.currentTarget)
-      current.addClass('previous')
-      $._.doAfter 200, =>
-        current.addClass('answered')
-        current.removeClass('current')
-        next = current.next().addClass('current')
-        @$('.question-index').text next.attr('data-index')
+    current = $(e.currentTarget)
+    if parseInt(current.attr('data-index')) is 74
+      @finish()
+    else
+      _.delay 400, =>
+        next = current.next()
+        @$('.previous').removeClass('previous')
+        current.addClass('previous')
+        _.delay 200, =>
+          current.addClass('answered')
+          current.removeClass('current')
+          next.addClass('current')
+          @$('.question-index').text next.attr('data-index')
+          #if parseInt(next.attr('data-index')) is 74
+            #@$el.append($('<footer><button class="finish">Finish</button><footer>'))
+
 
   toggleQuestion: (e) ->
     q = $(e.currentTarget).parents('.question')
@@ -89,14 +98,15 @@ window.Test = $.View.extend
     q = $(e.currentTarget)
     q.toggleClass('show')
 
-  finish: (e) ->
+  finish: ->
+    console.log 'finished'
     checked = @$('input:checked')
     if checked.length is 74
       @$('input:checked').each (i)=>
         input = $(i)
         name = $(input).attr('name')
         attr = input.attr('data-attribute')
-        @model.set attr, $._.union(@model.get(attr), [name])
+        @model.set attr, _.union(@model.get(attr), [name])
       @renderResults()
     else
       if checked.length is 73
@@ -126,3 +136,5 @@ window.Test = $.View.extend
     
     type[k] = Math.round(v*100) for k,v of type
     type
+
+module.exports = test

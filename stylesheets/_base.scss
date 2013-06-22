@@ -18,6 +18,7 @@ ol {
 }
 h1 {
   font-size: 1.7em;
+  span { font-size: .7em; color: rgba(#000, .6); &:before { content: '(';} &:after { content: '%)';} position: relative; top: -.3em; }
 }
 h2 {
   font-size: 1.8em;

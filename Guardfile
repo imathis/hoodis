@@ -1,12 +1,14 @@
-# A sample Guardfile
-# More info at https://github.com/guard/guard#readme
+require './stitcher'
 
-guard 'coffeescript', :input => 'coffeescripts', :output => 'javascripts'
+stitcher = Stitcher.new
 
-guard :coffeescript do
-  watch(%r{^coffeescripts/(.+\.coffee)$})
+guard :shell do
+  watch /^javascripts\/.+\.(js|coffee|mustache|eco|tmpl)/ do |change|
+    stitcher.compile
+  end
 end
 
 guard :compass do
-  watch(%r{^sass/(.*)\.s[ac]ss$})
+  watch(%r{^stylesheets/(.*)\.s[ac]ss$})
 end
+

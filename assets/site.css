@@ -1,31 +1,46 @@
-/* line 7, ../sass/_base.scss */
+/* line 7, ../stylesheets/_base.scss */
 html {
   background-color: #eff7fb;
 }
 
-/* line 10, ../sass/_base.scss */
+/* line 10, ../stylesheets/_base.scss */
 body {
   font-family: Helvetica, Arial, sans;
 }
 
-/* line 14, ../sass/_base.scss */
+/* line 14, ../stylesheets/_base.scss */
 ol {
   margin: 0 0 0;
   padding: 0;
   list-style: none;
 }
 
-/* line 19, ../sass/_base.scss */
+/* line 19, ../stylesheets/_base.scss */
 h1 {
   font-size: 1.7em;
 }
+/* line 21, ../stylesheets/_base.scss */
+h1 span {
+  font-size: .7em;
+  color: rgba(0, 0, 0, 0.6);
+  position: relative;
+  top: -0.3em;
+}
+/* line 21, ../stylesheets/_base.scss */
+h1 span:before {
+  content: '(';
+}
+/* line 21, ../stylesheets/_base.scss */
+h1 span:after {
+  content: '%)';
+}
 
-/* line 22, ../sass/_base.scss */
+/* line 23, ../stylesheets/_base.scss */
 h2 {
   font-size: 1.8em;
 }
 
-/* line 25, ../sass/_base.scss */
+/* line 26, ../stylesheets/_base.scss */
 ul {
   list-style: none;
   padding: 0;
@@ -39,23 +54,23 @@ ul:after {
   clear: both;
 }
 
-/* line 32, ../sass/_base.scss */
+/* line 33, ../stylesheets/_base.scss */
 footer {
   display: none;
 }
 
-/* line 34, ../sass/_base.scss */
+/* line 35, ../stylesheets/_base.scss */
 input[type=checkbox], input[type=radio] {
   position: absolute;
   z-index: -100;
   opacity: 0;
 }
-/* line 38, ../sass/_base.scss */
+/* line 39, ../stylesheets/_base.scss */
 input[type=checkbox] + label, input[type=radio] + label {
   position: relative;
   cursor: pointer;
 }
-/* line 42, ../sass/_base.scss */
+/* line 43, ../stylesheets/_base.scss */
 input[type=checkbox] + label:before, input[type=radio] + label:before {
   content: "";
   width: 16px;
@@ -77,18 +92,18 @@ input[type=checkbox] + label:before, input[type=radio] + label:before {
   background-image: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0.15));
   background-color: #fff;
 }
-/* line 56, ../sass/_base.scss */
+/* line 57, ../stylesheets/_base.scss */
 input[type=checkbox] + label:after, input[type=radio] + label:after {
   content: "";
   position: absolute;
 }
-/* line 61, ../sass/_base.scss */
+/* line 62, ../stylesheets/_base.scss */
 input[type=checkbox]:checked + label:before, input[type=radio]:checked + label:before {
   -webkit-box-shadow: rgba(63, 159, 207, 0.4) 0 0 1px 2px, rgba(63, 159, 207, 0.7) 0 0 1px 1px;
   -moz-box-shadow: rgba(63, 159, 207, 0.4) 0 0 1px 2px, rgba(63, 159, 207, 0.7) 0 0 1px 1px;
   box-shadow: rgba(63, 159, 207, 0.4) 0 0 1px 2px, rgba(63, 159, 207, 0.7) 0 0 1px 1px;
 }
-/* line 64, ../sass/_base.scss */
+/* line 65, ../stylesheets/_base.scss */
 input[type=checkbox]:focus + label:before, input[type=radio]:focus + label:before {
   -webkit-box-shadow: rgba(63, 159, 207, 0.4) 0 0 2px 2px, rgba(63, 159, 207, 0.7) 0 0 1px 1px;
   -moz-box-shadow: rgba(63, 159, 207, 0.4) 0 0 2px 2px, rgba(63, 159, 207, 0.7) 0 0 1px 1px;
@@ -96,7 +111,7 @@ input[type=checkbox]:focus + label:before, input[type=radio]:focus + label:befor
   background-color: rgba(63, 159, 207, 0.05);
 }
 
-/* line 71, ../sass/_base.scss */
+/* line 72, ../stylesheets/_base.scss */
 input[type=radio] + label:before {
   -webkit-border-radius: 1em;
   -moz-border-radius: 1em;
@@ -104,7 +119,7 @@ input[type=radio] + label:before {
   -o-border-radius: 1em;
   border-radius: 1em;
 }
-/* line 72, ../sass/_base.scss */
+/* line 73, ../stylesheets/_base.scss */
 input[type=radio] + label:after {
   width: 6px;
   height: 6px;
@@ -116,15 +131,15 @@ input[type=radio] + label:after {
   -o-border-radius: 6px;
   border-radius: 6px;
 }
-/* line 78, ../sass/_base.scss */
+/* line 79, ../stylesheets/_base.scss */
 input[type=radio] + label:hover:after {
   background-color: rgba(0, 0, 0, 0.3);
 }
-/* line 81, ../sass/_base.scss */
+/* line 82, ../stylesheets/_base.scss */
 input[type=radio]:focus + label:after {
   background-color: rgba(63, 159, 207, 0.5);
 }
-/* line 84, ../sass/_base.scss */
+/* line 85, ../stylesheets/_base.scss */
 input[type=radio]:checked + label:after {
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #2c83af), color-stop(100%, #53a9d4));
   background-image: -webkit-linear-gradient(#2c83af, #53a9d4);
@@ -133,7 +148,7 @@ input[type=radio]:checked + label:after {
   background-image: linear-gradient(#2c83af, #53a9d4);
 }
 
-/* line 89, ../sass/_base.scss */
+/* line 90, ../stylesheets/_base.scss */
 [data-icon]:before {
   font-family: dblayer;
   content: attr(data-icon);
@@ -142,7 +157,7 @@ input[type=radio]:checked + label:after {
   line-height: 1em;
 }
 
-/* line 96, ../sass/_base.scss */
+/* line 97, ../stylesheets/_base.scss */
 .screen-reader-text {
   position: absolute;
   top: -9999px;
@@ -150,7 +165,7 @@ input[type=radio]:checked + label:after {
   color: transparent;
 }
 
-/* line 1, ../sass/_test.scss */
+/* line 1, ../stylesheets/_test.scss */
 #test {
   max-width: 500px;
   margin: 1em auto;
@@ -158,50 +173,50 @@ input[type=radio]:checked + label:after {
   font-size: 18px;
 }
 
-/* line 10, ../sass/_test.scss */
+/* line 10, ../stylesheets/_test.scss */
 .progress {
   text-align: right;
   text-transform: uppercase;
   font: normal normal .8em "Caviar Dreams";
 }
 
-/* line 16, ../sass/_test.scss */
+/* line 16, ../stylesheets/_test.scss */
 .next {
   display: none;
 }
 
-/* line 17, ../sass/_test.scss */
+/* line 17, ../stylesheets/_test.scss */
 .back {
   text-decoration: none;
   color: #000;
 }
 
-/* line 19, ../sass/_test.scss */
+/* line 19, ../stylesheets/_test.scss */
 .question-index, .all {
   letter-spacing: -0.1em;
 }
 
-/* line 23, ../sass/_test.scss */
+/* line 23, ../stylesheets/_test.scss */
 .question {
   color: rgba(0, 0, 0, 0.5);
   height: 0px;
   overflow: hidden;
 }
-/* line 27, ../sass/_test.scss */
+/* line 27, ../stylesheets/_test.scss */
 .question.current, .question.show {
   font-size: 1em;
   height: auto;
   overflow: visible;
 }
-/* line 32, ../sass/_test.scss */
+/* line 32, ../stylesheets/_test.scss */
 .question.previous, .question.current, .question.answered {
   color: black;
 }
-/* line 35, ../sass/_test.scss */
+/* line 35, ../stylesheets/_test.scss */
 .question li {
   line-height: 1.45em;
 }
-/* line 36, ../sass/_test.scss */
+/* line 36, ../stylesheets/_test.scss */
 .question header {
   display: block;
   margin: .7em 0;
@@ -211,15 +226,15 @@ input[type=radio]:checked + label:after {
   border-top: 4px solid #000;
   border-bottom: 1px solid rgba(0, 0, 0, 0.3);
 }
-/* line 44, ../sass/_test.scss */
+/* line 44, ../stylesheets/_test.scss */
 .question header h2 {
   margin: 0;
 }
-/* line 45, ../sass/_test.scss */
+/* line 45, ../stylesheets/_test.scss */
 .question header p {
   margin: .8em 0 .3em;
 }
-/* line 47, ../sass/_test.scss */
+/* line 47, ../stylesheets/_test.scss */
 .question header h2, .question header p, .question ul {
   -webkit-transform: translateX(10%);
   -moz-transform: translateX(10%);
@@ -227,7 +242,7 @@ input[type=radio]:checked + label:after {
   -o-transform: translateX(10%);
   transform: translateX(10%);
 }
-/* line 49, ../sass/_test.scss */
+/* line 49, ../stylesheets/_test.scss */
 .question.current header h2, .question.current header p, .question.current ul {
   -webkit-transform: translateX(0);
   -moz-transform: translateX(0);
@@ -239,12 +254,12 @@ input[type=radio]:checked + label:after {
   -o-transition: all 0.2s ease-out;
   transition: all 0.2s ease-out;
 }
-/* line 55, ../sass/_test.scss */
+/* line 55, ../stylesheets/_test.scss */
 .question.previous.current header h2, .question.previous.current header p, .question.previous.current ul {
   opacity: 0;
 }
 
-/* line 61, ../sass/_test.scss */
+/* line 61, ../stylesheets/_test.scss */
 .answered {
   display: none;
 }

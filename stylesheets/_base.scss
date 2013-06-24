@@ -1,14 +1,15 @@
 $input-border-focus: #3F9FCF;
+$page-bg: mix(#fff, $input-border-focus, 92%);
 
 @mixin at-width($size) {
   @media screen and (min-width: $size) { @content; }
 }
 
 html {
-  background-color: mix(#fff, $input-border-focus, 92%);//#fafafa;
+  background-color: $page-bg;
 }
 body {
-  font-family: Helvetica, Arial, sans;
+  font-family: "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans;
 }
 
 ol {
@@ -16,6 +17,8 @@ ol {
   padding: 0;
   list-style: none;
 }
+#{headings()}{ font-weight: normal; }
+
 h1 {
   font-size: 1.7em;
   span { font-size: .7em; color: rgba(#000, .6); &:before { content: '(';} &:after { content: '%)';} position: relative; top: -.3em; }
@@ -32,14 +35,16 @@ ul {
 
 footer { display: none; }
 
-input[type=checkbox], input[type=radio] { 
+input[type=radio] { 
   position: absolute;
   z-index: -100;
   opacity: 0;
+
   + label {
     position: relative;
     cursor: pointer;
     $size: 16px;
+
     &:before {
       content: "";
       width: $size; height: $size;
@@ -50,45 +55,32 @@ input[type=checkbox], input[type=radio] {
       margin-right: 8px;
       color: transparent;
       cursor: pointer;
-      @include box-shadow(rgba(#000, .1) 0 0 1px 2px, rgba(#000, .2) 0 0 1px 1px, rgba(#000, .2) 0 1px 2px, #fff 0 -2px 0);
-      @include background-image(linear-gradient(rgba(#fff, .2), rgba(#fff, 0) 30%, rgba(#000, .15)));
-      background-color: #fff;
-    }
-    &:after {
-      content: "";
-      position: absolute;
+      box-shadow: rgba(#000, .4) 0 0 0 1px inset;
+      background-color: transparent;
     }
   }
-  &:checked + label:before { 
-    @include box-shadow(rgba($input-border-focus, .4) 0 0 1px 2px, rgba($input-border-focus, .7) 0 0 1px 1px);
-  }
-  &:focus + label:before {
-    @include box-shadow(rgba($input-border-focus, .4) 0 0 2px 2px, rgba($input-border-focus, .7) 0 0 1px 1px);
-    background-color: rgba($input-border-focus, .05);
-  }
-}
 
-input[type=radio] {
-  + label:before { @include border-radius(1em); }
-  + label:after {
-    $size: 6px;
-    width: $size; height: $size;
-    left: 5px; top: .45em;
-    @include border-radius($size);
+  + label:before {
+    @include border-radius(1em);
   }
-  + label:hover:after {
-    background-color: rgba(#000, .3);
+
+  + label:hover:before,
+  &:focus +label:before {
+    box-shadow: rgba(#000, .3) 0 0 0 2px inset;
   }
-  &:focus +label:after {
-    background-color: rgba($input-border-focus, .5);
+
+  + label:active:before {
+    box-shadow: rgba(#000, .3) 0 0 0 1px inset;
+    background: rgba(#000, .1);
   }
-  &:checked + label:after {
-    @include background-image(linear-gradient(darken($input-border-focus, 10), lighten($input-border-focus, 5)));
+
+  &:checked + label:before {
+    box-shadow: rgba(#000, .5) 0 0 0 1px inset;
+    background: rgba(#000, .1);
   }
 }
 
 [data-icon]:before {
-  font-family: dblayer;
   content: attr(data-icon);
   -webkit-font-smoothing: antialiased;
   speak: none;

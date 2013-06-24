@@ -14,17 +14,35 @@ $.fn = _.extend $.fn ,
     @
 
   # Add a class until a period of time. Fires a callback when complete
-  addClassUntil: (className, time=400, onComplete = (->true))->
-    @addClass className 
-    _.delay time, =>
-      @removeClass className
-      onComplete()
-    @
+  addClassUntil: (time=400, className, onComplete = (->true))->
+    @addClass(className).removeClassAfter time, className, onComplete
 
   # Add a class after a period of time. Fires a callback when complete
-  addClassAfter: (className, time=400, onComplete = (->true))->
+  addClassAfter: (time=400, className, onComplete = (->true))->
     _.delay time, =>
       @addClass className
+      onComplete()
+    @
+  
+  # Add css style for a period of time. Fires a callback when complete
+  cssUntil: (time=400, style, onComplete = (->true))->
+    prevStyle = {}
+    prevStyle[k] = @css(k) for k of style
+
+    @css(style).cssAfter time, prevStyle, onComplete
+
+  # Add css style after a period of time. Fires a callback when complete
+  cssAfter: (time=400, style, onComplete = (->true))->
+    _.delay time, =>
+      @css style
+      onComplete()
+    @
+ 
+  
+  # Remove a class after a period of time. Fires a callback when complete
+  removeClassAfter: (time=400, className, onComplete = (->true))->
+    _.delay time, =>
+      @removeClass className
       onComplete()
     @
   

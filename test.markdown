@@ -135,88 +135,88 @@
 ## Thinking vs. Feeling
 
 ### With people, are you usually more
-- (T) firm
 - (F) gentle
+- (T) firm
 
 ### Are you more comfortable in making
-- (T) critical judgments
 - (F) value judgments
+- (T) critical judgments
 
 ### In making up your mind, are you more likely to go by
-- (T) data
 - (F) desires
+- (T) data
 
 ### In sizing up others, do you tend to be
-- (T) objective and impersonal
 - (F) friendly and personal
+- (T) objective and impersonal
 
 ### Which appeals to you more
-- (T) consistency of thought
 - (F) harmonious relationships
+- (T) consistency of thought
 
 ### If you must disappoint someone, are you usually
-- (T) frank and straightforward
 - (F) warm and considerate
+- (T) frank and straightforward
 
 ### In a heated discussion, do you
-- (T) stick to your guns
 - (F) look for common ground
+- (T) stick to your guns
 
 ### Is it better to be
-- (T) just
 - (F) merciful
+- (T) just
 
 ### When in charge of others, do you tend to be
-- (T) firm and unbending
 - (F) forgiving and lenient
+- (T) firm and unbending
 
 ### Are you more often
-- (T) a cool-headed person
 - (F) a warm-hearted person
+- (T) a cool-headed person
 
 ### Which is more of a compliment
-- (T) There's a logical person
 - (F) There's a sentimental person
+- (T) There's a logical person
 
 ### Which rules you more
-- (T) your thoughts
 - (F) your feelings
+- (T) your thoughts
 
 ### Is it worse to be
-- (T) a softy
 - (F) hard-nosed
+- (T) a softy
 
 ### In trying circumstances, are you sometimes
-- (T) too unsympathetic
 - (F) too sympathetic
+- (T) too unsympathetic
 
 ### Do you think of yourself as a
-- (T) tough-minded person
 - (F) tender-hearted person
+- (T) tough-minded person
 
 ### Do you value in yourself more that you are
-- (T) reasonable
 - (F) devoted
+- (T) reasonable
 
 ### Which seems the greater fault
-- (T) to be too compassionate
 - (F) to be too dispassionate
+- (T) to be too compassionate
 
 ### Are you swayed more by
-- (T) convincing evidence
 - (F) a touching appeal
+- (T) convincing evidence
 
 ### Which do you wish more for yourself
-- (T) strength of will
 - (F) strength of emotion
+- (T) strength of will
 
 ### Do you see yourself as basically
-- (T) thick-skinned
 - (F) thin-skinned
+- (T) thick-skinned
 
 ### In judging others, are you more swayed by
-- (T) laws
 - (F) circumstances
+- (T) laws
 
 ## Judging vs. Perceiving
 

@@ -1,4 +1,4 @@
-/* Build fingerprint: 681ba4d97c1b534eeed886782e7ad92d */
+/* Build fingerprint: d2412a0c4732e295b2597d2777353f70 */
 /*!
  * jQuery JavaScript Library v1.10.1
  * http://jquery.com/
@@ -12629,8 +12629,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
       }
       return this;
     },
-    addClassUntil: function(className, time, onComplete) {
-      var _this = this;
+    addClassUntil: function(time, className, onComplete) {
       if (time == null) {
         time = 400;
       }
@@ -12639,14 +12638,9 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
           return true;
         });
       }
-      this.addClass(className);
-      _.delay(time, function() {
-        _this.removeClass(className);
-        return onComplete();
-      });
-      return this;
+      return this.addClass(className).removeClassAfter(time, className, onComplete);
     },
-    addClassAfter: function(className, time, onComplete) {
+    addClassAfter: function(time, className, onComplete) {
       var _this = this;
       if (time == null) {
         time = 400;
@@ -12658,6 +12652,54 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
       }
       _.delay(time, function() {
         _this.addClass(className);
+        return onComplete();
+      });
+      return this;
+    },
+    cssUntil: function(time, style, onComplete) {
+      var k, prevStyle;
+      if (time == null) {
+        time = 400;
+      }
+      if (onComplete == null) {
+        onComplete = (function() {
+          return true;
+        });
+      }
+      prevStyle = {};
+      for (k in style) {
+        prevStyle[k] = this.css(k);
+      }
+      return this.css(style).cssAfter(time, prevStyle, onComplete);
+    },
+    cssAfter: function(time, style, onComplete) {
+      var _this = this;
+      if (time == null) {
+        time = 400;
+      }
+      if (onComplete == null) {
+        onComplete = (function() {
+          return true;
+        });
+      }
+      _.delay(time, function() {
+        _this.css(style);
+        return onComplete();
+      });
+      return this;
+    },
+    removeClassAfter: function(time, className, onComplete) {
+      var _this = this;
+      if (time == null) {
+        time = 400;
+      }
+      if (onComplete == null) {
+        onComplete = (function() {
+          return true;
+        });
+      }
+      _.delay(time, function() {
+        _this.removeClass(className);
         return onComplete();
       });
       return this;
@@ -12859,15 +12901,19 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
     Questions.prototype.url = '/test.markdown';
 
     Questions.prototype.defaults = {
-      E: [],
-      I: [],
-      S: [],
-      N: [],
-      T: [],
-      F: [],
-      J: [],
-      P: [],
-      questions: []
+      questions: [],
+      answers: [],
+      count: {
+        E: 0,
+        I: 0,
+        S: 0,
+        N: 0,
+        F: 0,
+        T: 0,
+        J: 0,
+        P: 0
+      },
+      type: {}
     };
 
     Questions.prototype.shuffle = false;
@@ -12886,6 +12932,23 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
           });
         }
       });
+    };
+
+    Questions.prototype.answer = function(index, type) {
+      var answers, count;
+      answers = this.get('answers');
+      count = this.get('count');
+      answers[index - 1] = type;
+      count = _.defaults(_.countBy(answers), count);
+      this.set({
+        answers: answers
+      });
+      this.set({
+        count: count
+      });
+      if (_.compact(answers).length === this.get('questions').length) {
+        return this.getResult();
+      }
     };
 
     Questions.prototype.parseQuestions = function(data) {
@@ -12922,6 +12985,39 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
       return qs;
     };
 
+    Questions.prototype.getResult = function() {
+      var k, p, type, v;
+      p = this.get('count');
+      type = {};
+      if (p.E > p.I) {
+        type.E = p.E / 11;
+      } else {
+        type.I = p.I / 11;
+      }
+      if (p.S > p.N) {
+        type.S = p.S / 21;
+      } else {
+        type.N = p.N / 21;
+      }
+      if (p.F > p.T) {
+        type.F = p.F / 21;
+      } else {
+        type.T = p.T / 21;
+      }
+      if (p.J > p.P) {
+        type.J = p.J / 21;
+      } else {
+        type.P = p.P / 21;
+      }
+      for (k in type) {
+        v = type[k];
+        type[k] = Math.round(v * 100);
+      }
+      return this.set({
+        type: type
+      });
+    };
+
     return Questions;
 
   })(Backbone.Model);
@@ -12940,20 +13036,18 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
       this.setElement($(options.el));
       this.questionTemplate = _.template($('#question').html());
       this.resultsTemplate = _.template($('#results').html());
-      return this.model.on('change:questions', this.render, this);
+      this.model.on('change:questions', this.render, this);
+      return this.model.on('change:type', this.finish, this);
     };
 
     Test.prototype.events = {
-      'click button': 'finish',
-      'click .answered h2': 'toggleQuestion',
-      'change .answered': 'closeQuestion',
-      'change .current': 'choose'
+      'change .question': 'choose'
     };
 
     Test.prototype.render = function() {
       var list,
         _this = this;
-      list = $('<ol id="questions">');
+      list = $('<ol class="questions">');
       this.$('header').after(list);
       _.each(this.model.get('questions'), function(q, index) {
         var answers, t;
@@ -12970,36 +13064,24 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
       return this.list.first().addClass('current');
     };
 
-    Test.prototype.renderResults = function() {
-      var type;
-      type = this.calc();
-      this.$el.empty();
-      return this.$el.append($(this.resultsTemplate({
-        t: _.keys(type),
-        v: _.values(type)
-      })));
-    };
-
     Test.prototype.choose = function(e) {
       var current,
         _this = this;
       current = $(e.currentTarget);
-      if (parseInt(current.attr('data-index')) === 74) {
-        return this.finish();
-      } else {
-        return _.delay(400, function() {
-          var next;
-          next = current.next();
-          _this.$('.previous').removeClass('previous');
-          current.addClass('previous');
-          return _.delay(200, function() {
-            current.addClass('answered');
-            current.removeClass('current');
-            next.addClass('current');
-            return _this.$('.question-index').text(next.attr('data-index'));
-          });
+      this.model.answer(current.data('index'), current.find('input:checked').data('attribute'));
+      return _.delay(400, function() {
+        var next;
+        next = current.next();
+        _this.$('.previous').removeClass('previous');
+        current.addClassUntil(400, 'out current');
+        current.addClassAfter(400, 'previous, answered');
+        current.cssUntil(400, {
+          'margin-top': "-" + (current.height() / 4) + "px"
         });
-      }
+        next.addClass('current');
+        next.addClassUntil(400, 'in');
+        return _this.$('.question-index').text(next.attr('data-index'));
+      });
     };
 
     Test.prototype.toggleQuestion = function(e) {
@@ -13015,67 +13097,13 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
     };
 
     Test.prototype.finish = function() {
-      var checked,
-        _this = this;
-      console.log('finished');
-      checked = this.$('input:checked');
-      if (checked.length === 74) {
-        this.$('input:checked').each(function(i) {
-          var attr, input, name;
-          input = $(i);
-          name = $(input).attr('name');
-          attr = input.attr('data-attribute');
-          return _this.model.set(attr, _.union(_this.model.get(attr), [name]));
-        });
-        return this.renderResults();
-      } else {
-        if (checked.length === 73) {
-          alert("You missed one");
-        } else if (checked.length === 72) {
-          alert("You missed a couple");
-        } else {
-          alert("You missed a few");
-        }
-        return checked.parents('.question').addClass('answered');
-      }
-    };
-
-    Test.prototype.calc = function() {
-      var E, F, I, J, N, P, S, T, k, type, v;
-      type = {};
-      E = this.model.get('E');
-      I = this.model.get('I');
-      S = this.model.get('S');
-      N = this.model.get('N');
-      T = this.model.get('T');
-      F = this.model.get('F');
-      J = this.model.get('J');
-      P = this.model.get('P');
-      if (E.length > I.length) {
-        type.E = E.length / 11;
-      } else {
-        type.I = I.length / 11;
-      }
-      if (S.length > N.length) {
-        type.S = S.length / 21;
-      } else {
-        type.N = N.length / 21;
-      }
-      if (T.length > F.length) {
-        type.T = T.length / 21;
-      } else {
-        type.F = F.length / 21;
-      }
-      if (J.length > P.length) {
-        type.J = J.length / 21;
-      } else {
-        type.P = P.length / 21;
-      }
-      for (k in type) {
-        v = type[k];
-        type[k] = Math.round(v * 100);
-      }
-      return type;
+      var type;
+      type = this.model.get('type');
+      this.$el.empty();
+      return this.$el.append($(this.resultsTemplate({
+        t: _.keys(type),
+        v: _.values(type)
+      })));
     };
 
     return Test;

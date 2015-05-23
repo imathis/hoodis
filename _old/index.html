@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Personality test</title>
+    <link href="assets/site.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="favicon.png" rel="shortcut icon">
+  </head>
+  <body>
+    <div id="test">
+      <header class='progress-banner'>
+        <!--<a class="back" href="#" data-icon="⬅"><span class="screen-reader-text">back</span></a>-->
+        <p>
+          question <span class="question-index">1</span> of <span class="all" href="#">74</span>
+        </p>
+        <a class="next" href="#">next</a>
+        <div class='progress'><div class="fill"></div></div>
+      </header>
+      <footer>
+        <button>Submit</button>
+      </footer>
+    </div>
+  </body>
+  <script type="text/template" id="question">
+    <li class="question" data-index="<%= index %>">
+      <header>
+        <h2 class="question-title"><%= title %></h2>
+        <% if (typeof(paragraph) != "undefined") { %>
+          <p><%= paragraph %></p>
+        <% } %>
+      </header>
+      <ul>
+        <li> 
+          <input id="q<%= index %>a1" type="radio" name="q<%= index %>" data-attribute="<%= answers[0].attribute %>"><label for="q<%= index %>a1"><%= answers[0].text %></label>
+        </li>
+        <li>
+          <input id="q<%= index %>a2" type="radio" name="q<%= index %>" data-attribute="<%= answers[1].attribute %>"><label for="q<%= index %>a2"><%= answers[1].text %></label>
+        </li>
+      </ul>
+    </li>
+  </script>
+  <script type="text/template" id="results">
+    <header>
+      <h2>You are an</h2>
+      <h1>
+        <%=t[0]%><span><%=v[0]%></span>
+        <%=t[1]%><span><%=v[1]%></span>
+        <%=t[2]%><span><%=v[2]%></span>
+        <%=t[3]%><span><%=v[3]%></span>
+      </h1>
+    </header>
+  </script>
+  <script src="assets/site.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    test = require('test')
+    test.start()
+  </script>
+</html>

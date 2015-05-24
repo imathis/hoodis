@@ -1,18 +1,28 @@
+PATH
+  remote: ../../octodev/asset-pipeline
+  specs:
+    octopress-asset-pipeline (2.0.5)
+      octopress-ink (~> 1.1.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
     autoprefixer-rails (2.2.0.20140804)
       execjs
     blankslate (2.1.2.4)
+    byebug (4.0.5)
+      columnize (= 0.9.0)
     celluloid (0.16.0)
       timers (~> 4.0.0)
     classifier-reborn (2.0.3)
       fast-stemmer (~> 1.0)
+    coderay (1.1.0)
     coffee-script (2.4.1)
       coffee-script-source
       execjs
     coffee-script-source (1.9.1.1)
     colorator (0.1)
+    columnize (0.9.0)
     execjs (2.5.2)
     fast-stemmer (1.0.2)
     ffi (1.9.8)
@@ -48,6 +58,7 @@ GEM
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
     mercenary (0.3.5)
+    method_source (0.8.2)
     octopress (3.0.5)
       jekyll (>= 2.0)
       mercenary (~> 0.3.2)
@@ -56,8 +67,6 @@ GEM
       octopress-hooks (~> 2.0)
       redcarpet (~> 3.0)
       titlecase
-    octopress-asset-pipeline (2.0.4)
-      octopress-ink (~> 1.1.0)
     octopress-autoprefixer (1.0.1)
       autoprefixer-rails (~> 2.2)
       jekyll (>= 2.0)
@@ -92,6 +101,13 @@ GEM
     parslet (1.5.0)
       blankslate (~> 2.0)
     posix-spawn (0.3.11)
+    pry (0.10.1)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
+    pry-byebug (3.1.0)
+      byebug (~> 4.0)
+      pry (~> 0.10)
     pygments.rb (0.6.3)
       posix-spawn (~> 0.3.6)
       yajl-ruby (~> 1.2.0)
@@ -102,6 +118,7 @@ GEM
     rubypants-unicode (0.2.5)
     safe_yaml (1.0.4)
     sass (3.4.14)
+    slop (3.6.0)
     timers (4.0.1)
       hitimes
     titlecase (0.1.1)
@@ -117,4 +134,5 @@ PLATFORMS
 
 DEPENDENCIES
   jekyll
-  octopress-asset-pipeline
+  octopress-asset-pipeline!
+  pry-byebug
